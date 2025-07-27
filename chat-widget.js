@@ -1,5 +1,5 @@
 // Chat Widget Script
-(function() {
+(function () {
     // Create and inject styles
     const styles = `
         .n8n-chat-widget {
@@ -12,8 +12,8 @@
 
         .n8n-chat-widget .chat-container {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 30px;
+            right: 30px;
             z-index: 1000;
             display: none;
             width: 90%;
@@ -268,11 +268,11 @@
 
         .n8n-chat-widget .chat-toggle {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            border-radius: 30px;
+            bottom: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            border-radius: 40px;
             background: var(--chat--color-primary);
             color: white;
             border: none;
@@ -285,6 +285,14 @@
             justify-content: center;
         }
 
+        @media (max-width: 600px) {
+          .n8n-chat-widget .chat-toggle {
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+          }
+        }
+
         .n8n-chat-widget .chat-toggle.position-left {
             right: auto;
             left: 20px;
@@ -295,9 +303,16 @@
         }
 
         .n8n-chat-widget .chat-toggle img {
-            width: 32px;
-            height: 32px;
+            width: 48px;
+            height: 48px;
             object-fit: contain;
+        }
+
+        @media (max-width: 600px) {
+          .n8n-chat-widget .chat-toggle img {
+            width: 36px;
+            height: 36px;
+          }
         }
 
         .n8n-chat-widget .chat-footer {
@@ -358,7 +373,7 @@
     };
 
     // Merge user config with defaults
-    const config = window.ChatWidgetConfig ? 
+    const config = window.ChatWidgetConfig ?
         {
             webhook: { ...defaultConfig.webhook, ...window.ChatWidgetConfig.webhook },
             branding: { ...defaultConfig.branding, ...window.ChatWidgetConfig.branding },
@@ -374,7 +389,7 @@
     // Create widget container
     const widgetContainer = document.createElement('div');
     widgetContainer.className = 'n8n-chat-widget';
-    
+
     // Set CSS variables for colors
     widgetContainer.style.setProperty('--n8n-chat-primary-color', config.style.primaryColor);
     widgetContainer.style.setProperty('--n8n-chat-secondary-color', config.style.secondaryColor);
@@ -383,7 +398,7 @@
 
     const chatContainer = document.createElement('div');
     chatContainer.className = `chat-container${config.style.position === 'left' ? ' position-left' : ''}`;
-    
+
     const newConversationHTML = `
         <div class="brand-header">
             <img src="${config.branding.logo}" alt="${config.branding.name}">
@@ -419,9 +434,9 @@
             </div>
         </div>
     `;
-    
+
     chatContainer.innerHTML = newConversationHTML + chatInterfaceHTML;
-    
+
     const toggleButton = document.createElement('button');
     toggleButton.className = `chat-toggle${config.style.position === 'left' ? ' position-left' : ''}`;
     toggleButton.innerHTML = `
@@ -429,8 +444,8 @@
         src="https://raw.githubusercontent.com/AssistioTech/n8n-chatbot-template/main/robot-assistant.png"
         alt="Chat Assistant"
       />
-    `; 
-    
+    `;
+
     widgetContainer.appendChild(chatContainer);
     widgetContainer.appendChild(toggleButton);
     document.body.appendChild(widgetContainer);
@@ -504,9 +519,9 @@
                 },
                 body: JSON.stringify(messageData)
             });
-            
+
             const data = await response.json();
-            
+
             const botMessageDiv = document.createElement('div');
             botMessageDiv.className = 'chat-message bot';
             botMessageDiv.textContent = Array.isArray(data) ? data[0].output : data.output;
@@ -518,7 +533,7 @@
     }
 
     newChatBtn.addEventListener('click', startNewConversation);
-    
+
     sendButton.addEventListener('click', () => {
         const message = textarea.value.trim();
         if (message) {
@@ -526,7 +541,7 @@
             textarea.value = '';
         }
     });
-    
+
     textarea.addEventListener('keypress', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
@@ -537,7 +552,7 @@
             }
         }
     });
-    
+
     toggleButton.addEventListener('click', () => {
         chatContainer.classList.toggle('open');
     });
