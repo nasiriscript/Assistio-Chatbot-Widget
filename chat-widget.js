@@ -219,6 +219,17 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
+        /* RTL support for Arabic and Persian text */
+        .n8n-chat-widget .chat-message.rtl {
+            direction: rtl;
+            text-align: right;
+        }
+
+        .n8n-chat-widget .chat-message.ltr {
+            direction: ltr;
+            text-align: left;
+        }
+
         .n8n-chat-widget .chat-input {
             padding: 16px;
             background: var(--chat--color-background);
@@ -346,6 +357,17 @@
     const styleSheet = document.createElement('style');
     styleSheet.textContent = styles;
     document.head.appendChild(styleSheet);
+
+    // Function to detect RTL languages (Arabic, Persian, Hebrew, etc.)
+    function isRTLText(text) {
+        const rtlRegex = /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/;
+        return rtlRegex.test(text);
+    }
+
+    // Function to get text direction class
+    function getTextDirectionClass(text) {
+        return isRTLText(text) ? 'rtl' : 'ltr';
+    }
 
     // Default configuration
     const defaultConfig = {
@@ -486,7 +508,9 @@
             chatInterface.classList.add('active');
 
             const botMessageDiv = document.createElement('div');
-            botMessageDiv.textContent = Array.isArray(responseData) ? responseData[0].output : responseData.output;
+            const botMessage = Array.isArray(responseData) ? responseData[0].output : responseData.output;
+            botMessageDiv.textContent = botMessage;
+            botMessageDiv.className = `chat-message bot ${getTextDirectionClass(botMessage)}`;
             messagesContainer.appendChild(botMessageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         } catch (error) {
@@ -506,7 +530,7 @@
         };
 
         const userMessageDiv = document.createElement('div');
-        userMessageDiv.className = 'chat-message user';
+        userMessageDiv.className = `chat-message user ${getTextDirectionClass(message)}`;
         userMessageDiv.textContent = message;
         messagesContainer.appendChild(userMessageDiv);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -523,8 +547,9 @@
             const data = await response.json();
 
             const botMessageDiv = document.createElement('div');
-            botMessageDiv.className = 'chat-message bot';
-            botMessageDiv.textContent = Array.isArray(data) ? data[0].output : data.output;
+            const botMessage = Array.isArray(data) ? data[0].output : data.output;
+            botMessageDiv.className = `chat-message bot ${getTextDirectionClass(botMessage)}`;
+            botMessageDiv.textContent = botMessage;
             messagesContainer.appendChild(botMessageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         } catch (error) {
